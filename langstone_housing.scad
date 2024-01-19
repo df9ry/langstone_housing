@@ -24,6 +24,14 @@ fastener_x     =   2.5;
 fastener_y     =  32.5;
 fastener_z     =   5.5;
 
+rundung_radius = (width_1 - fastener_width) / 2;
+
+schlitz_x      =  12.0;
+schlitz_y      =   3.0;
+schlitz_z      =   2.5;
+schlitz_dx     = 174.0;
+schlitz_dy     =  62.0;
+
 wand_dicke     =   3.0;
 rand_dicke     =   1.5; // Rand aussen
 rand_dicke_2   =   5.0; // Rand innen
@@ -163,10 +171,55 @@ module blocks_0() {
     }
 }
 
-module blocks() {
-    blocks_0();
+module rundung() {
+    rotate([-90, 0, 0])
+        cylinder(h = height_0, r = rundung_radius);
 }
 
-blocks();
-//fastener();
+module base() {
+    difference() {
+        blocks_0();
+        {
+            { // Rundungen
+                delta_x0 = (width_0 - fastener_width) / 2
+                              - rundung_radius;
+                delta_x1 = delta_x0 + fastener_width
+                              + 2 * rundung_radius;
+                delta_z  = h0 + h1;
+                
+                translate([delta_x0, 0, delta_z])
+                    rundung();
+                translate([delta_x1, 0, delta_z])
+                    rundung();
+            }
+            { // Schlitze
+                dx0 = (width_0 - schlitz_dx) / 2;
+                dx1 = dx0 + schlitz_dx;
+                dy0 = (height_0 - schlitz_dy 
+                         - schlitz_y) / 2;
+                dy1 = dy0 + schlitz_dy;
+                dz  = h0 + h1 - schlitz_z;
+                
+                translate([dx0, dy0, dz])
+                    cube([schlitz_x,
+                          schlitz_y,
+                          schlitz_z + delta]);
+                translate([dx0, dy1, dz])
+                    cube([schlitz_x,
+                          schlitz_y,
+                          schlitz_z + delta]);
+                translate([dx1, dy0, dz])
+                    cube([schlitz_x,
+                          schlitz_y,
+                          schlitz_z + delta]);
+                translate([dx1, dy1, dz])
+                    cube([schlitz_x,
+                          schlitz_y,
+                          schlitz_z + delta]);
+            }
+        }
+    }
+}
+
+base();
 
