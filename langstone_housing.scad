@@ -221,5 +221,101 @@ module base() {
     }
 }
 
-base();
+display_w    = 97.5;
+display_h    = 59.0;
+display_t    =  1.50; // Absenkung;
+display_rand =  1.25;
+display_x0   = 48.0;
+
+module display() {
+    translate([display_rand, display_rand, -delta])
+        cube([display_w - 2 * display_rand,
+              display_h - 2 * display_rand,
+              display_t + 2*delta]);
+    translate([0, 0, display_t])
+        cube([display_w, display_h, 10]);
+}
+
+mic_d0 = 20.0;
+mic_h0 =  2.0;
+mic_d1 = 16.0;
+mic_h1 =  2.5;
+mic_d2 = 25.0;
+
+module mic() {
+    translate([0, 0, -delta])
+        cylinder(h = mic_h0 + 2*delta, d = mic_d0);
+    translate([0, 0, mic_h0])
+        cylinder(h = mic_h1 + delta, d = mic_d1);
+    translate([0, 0, mic_h0 + mic_h1])
+        cylinder(h = 10, d = mic_d2);
+}
+
+taster_d0 = 12.25;
+
+module taster() {
+    translate([0, 0, -delta])
+        cylinder(h = 10, d = taster_d0);
+}
+
+phone_bu_d0 = 10.00;
+phone_bu_h0 =  1.50;
+phone_bu_d1 =  6.25;
+phone_bu_h1 =  1.50;
+
+module phone_bu() {
+    translate([0, 0, - 2*delta])
+        cylinder(h = phone_bu_h0, d = phone_bu_d0);
+    translate([0, 0, phone_bu_h0 - 3*delta])
+        cylinder(h = 15, d = phone_bu_d1);
+}
+
+phones_dx = 13.25;
+phones_dy = 17.00;
+
+module phones() {
+    translate([phones_dx * 0.75, 7.0, 0])
+        phone_bu();
+    translate([phones_dx * 1.75, 7.0, 0])
+        phone_bu();
+    
+    translate([0, 0, phone_bu_h0 + phone_bu_h1])
+        cube([phones_dx * 2.5, phones_dy, 10]); 
+}
+
+module front() {
+    difference() {
+        base();
+        {
+            // Display:
+            translate([display_x0,
+                       (height_0 - display_h) / 2,
+                       h0 - delta])
+                display();
+            { // Left side:
+                x0 = 16.0;
+                dx = 20.0;
+                // Mic:
+                translate([x0 + dx / 2,
+                           54.0,
+                           h0 - delta])
+                    mic();
+                // PTT Taster:
+                translate([x0 + dx / 2,
+                           16.0,
+                           h0 - delta])
+                    taster();
+               // Phone Buchsen:
+                translate([x0 + dx / 2 - phones_dx * 1.25,
+                           26.5,
+                           h0 - delta])
+                    phones();
+            }
+            
+        }
+    }
+}
+
+front();
+//phones();
 
