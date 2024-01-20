@@ -258,6 +258,13 @@ module taster() {
         cylinder(h = 10, d = taster_d0);
 }
 
+onoff_d0 = 16.25;
+
+module onoff() {
+    translate([0, 0, -delta])
+        cylinder(h = 10, d = onoff_d0);
+}
+
 phone_bu_d0 = 10.00;
 phone_bu_h0 =  1.50;
 phone_bu_d1 =  6.25;
@@ -283,39 +290,123 @@ module phones() {
         cube([phones_dx * 2.5, phones_dy, 10]); 
 }
 
+module left_side() {
+    x0 = 16.0;
+    dx = 20.0;
+    // Mic:
+    translate([x0 + dx / 2,
+               54.0,
+               h0 - delta])
+        mic();
+    // PTT Taster:
+    translate([x0 + dx / 2,
+               16.0,
+               h0 - delta])
+        taster();
+   // Phone Buchsen:
+    translate([x0 + dx / 2 - phones_dx * 1.25,
+               26.5,
+               h0 - delta])
+        phones();
+}
+
+module updown() {
+    x0 = 150.0;
+    dx = 20.0;
+    dy = 16.0;
+    translate([x0 + dx / 2,
+               dy,
+               h0 - delta])
+        taster();
+    translate([x0 + dx / 2,
+               height_0 - dy,
+               h0 - delta])
+        taster();
+}
+
+module power_switches() {
+    x0 = 210.0;
+    dx = 20.0;
+    dy = 17.0;
+    translate([x0 + dx / 2,
+               dy,
+               h0 - delta])
+        onoff();
+    translate([x0 + dx / 2,
+               height_0 - dy,
+               h0 - delta])
+        onoff();
+}
+
+dial_x0 = 190.00;
+dial_d0 =   7.25;
+dial_d1 =  16.00;
+
+dial_base_x = 30.00;
+dial_base_y = 30.00;
+dial_base_z =  3.00;
+dial_free_z =  5.00;
+dial_leg    =  6.00;
+
+module dial_block() {
+    translate([dial_x0 - dial_base_x / 2,
+               height_0 / 2 - dial_base_y / 2,
+               h0 + h1])
+    {
+        translate([0, 0, -delta])
+            cube([dial_leg,
+                  dial_leg,
+                  dial_free_z + 2*delta]);
+        translate([dial_base_x - dial_leg, 0, -delta])
+            cube([dial_leg,
+                  dial_leg,
+                  dial_free_z + 2*delta]);
+        translate([0, dial_base_y - dial_leg, -delta])
+            cube([dial_leg,
+                  dial_leg,
+                  dial_free_z + 2*delta]);
+        translate([dial_base_x - dial_leg, 
+                   dial_base_y - dial_leg, -delta])
+            cube([dial_leg,
+                  dial_leg,
+                  dial_free_z + 2*delta]);
+        translate([0, 0, dial_free_z])
+            cube([dial_base_x, dial_base_y, dial_base_z]);
+    }
+}
+
+module dial_loch() {
+    translate([dial_x0,
+               height_0 / 2,
+               h0 - 2*delta])
+        cylinder(h = 20, d = dial_d0);
+}
+
 module front() {
     difference() {
-        base();
         {
-            // Display:
-            translate([display_x0,
-                       (height_0 - display_h) / 2,
-                       h0 - delta])
-                display();
-            { // Left side:
-                x0 = 16.0;
-                dx = 20.0;
-                // Mic:
-                translate([x0 + dx / 2,
-                           54.0,
-                           h0 - delta])
-                    mic();
-                // PTT Taster:
-                translate([x0 + dx / 2,
-                           16.0,
-                           h0 - delta])
-                    taster();
-               // Phone Buchsen:
-                translate([x0 + dx / 2 - phones_dx * 1.25,
-                           26.5,
-                           h0 - delta])
-                    phones();
+            union() {
+                base();
+                dial_block();
             }
-            
+        }
+        ;
+        {
+            union() {
+                // Display:
+                translate([display_x0,
+                           (height_0 - display_h) / 2,
+                           h0 - delta])
+                    display();
+                left_side();
+                updown();
+                dial_loch();
+                power_switches();
+            }
         }
     }
 }
 
 front();
-//phones();
+//dial_block();
 
