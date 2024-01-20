@@ -3,8 +3,6 @@
 //use <ttf/RoddenberryItalic-VYz6.ttf>
 //use <ttf/RoddenberryBold-AgG2.ttf>
 use <ttf/RoddenberryBoldItalic-q4ol.ttf>
-use <unifont-15.1.04.otf>
-use <unifont_upper-15.1.04.otf>
 
 // Resolution for milling:
 $fa            = 1;    // Minimum angle
@@ -37,6 +35,30 @@ schlitz_dy     =  62.0;
 wand_dicke     =   3.0;
 rand_dicke     =   1.5; // Rand aussen
 rand_dicke_2   =   5.0; // Rand innen
+
+text_imprint   =   0.75;
+
+module svg(x, y, f, z=h0-2*delta, scale=1.0)
+{
+    translate([x, y, z])
+      mirror([1, 0, 0])
+        rotate([0, 0, 180])
+          linear_extrude(height = text_imprint)
+            scale([scale, scale, scale])
+              import(file=f,center=true);
+}
+
+module text2(x, y, text,
+             z = h0 - 2*delta,
+             size = 4,
+             font="Liberation Sans:style=Bold")
+{
+    translate([x, y, z])
+      mirror([1, 0, 0])
+        rotate([0, 0, 180])
+          linear_extrude(height = text_imprint)
+            text(text = text, size = size,font = font);
+}
 
 module sketch0() {
     r = r0;
@@ -275,11 +297,8 @@ module mic() {
     translate([0, 0, mic_h0 + mic_h1])
         cylinder(h = 10, d = mic_d2);
     // Text:
-    translate([-mic_d2 * 0.75 - 3.0, 
-               mic_d2 * 0.1, delta])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "MIC", size = 4,
-                 font="Liberation Sans:style=Bold");
+    text2(-mic_d2 * 0.75 - 3.0, mic_d2 * 0.1, "MIC",
+          z = -2*delta);
 }
 
 taster_d0 = 12.25;
@@ -292,11 +311,7 @@ module taster() {
 module ptt_taster() {
     taster();
     // Text:
-    translate([-mic_d2 * 0.75 - 3.0, 
-               1.3, delta])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "PTT", size = 4,
-                 font="Liberation Sans:style=Bold");
+    text2(-mic_d2 * 0.75 - 3.0, 1.3, "PTT", z=-2*delta);
 }
 
 onoff_d0 = 16.25;
@@ -324,20 +339,11 @@ phones_dy = 17.00;
 module phones() {
     translate([phones_dx * 0.75, 7.0, 0])
         phone_bu();
-
-    translate([-5.5, 10.6, 0])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "\U01F3A4", size = 7.5,
-                 font = "Unifont Upper");
-
+    svg(-1, 6.5, "microphone.svg", z=-2*delta, 
+        scale=0.035);
     translate([phones_dx * 1.75, 7.0, 0])
         phone_bu();
-    
-    translate([28.5, 10.6, 0])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "\U01F3A7", size = 7.5,
-                 font = "Unifont Upper");
-
+    svg(33, 6.5, "headphones.svg", z=-2*delta, scale=0.035);
     translate([0, 0, phone_bu_h0 + phone_bu_h1])
         cube([phones_dx * 2.5, phones_dy, 10]); 
 }
@@ -372,39 +378,24 @@ module updown() {
     dy  = 16.0;
     translate([dx1, dy, h0 - delta])
         taster();
-    translate([dx1 - 5.0, dy + 21, h0 - delta])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "\u25B2", size = 15,
-                 font = "Unifont");
-
+    text2(dx1-7.5, dy+19, "\u25B2", size=11);
     translate([dx1, height_0 - dy, h0 - delta])
         taster();
-    translate([dx1 - 5.0, dy + 35, h0 - delta])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "\u25BC", size = 15,
-                 font = "Unifont");
+    text2(dx1-7.5, dy+32, "\u25BC", size=11);
 }
 
 module power_switches() {
     x0 = 210.0;
     dx = 20.0;
     dy = 17.0;
-    translate([x0 + dx / 2,
-               dy,
-               h0 - delta])
+    translate([x0 + dx / 2, dy, h0 - delta])
         onoff();
-    translate([x0, dy + 17, h0 - delta])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "230V\u23E6", size = 5,
-                 font = "Unifont");
-    translate([x0 + dx / 2,
-               height_0 - dy,
-               h0 - delta])
+    text2(x0, dy+17, "230V");
+    svg(x0+17, dy+15, "AC.svg", scale=0.025);
+    translate([x0 + dx / 2, height_0 - dy, h0 - delta])
         onoff();
-    translate([x0 + 1.65, dy + 27, h0 - delta])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "12V\u2393", size = 5,
-                 font = "Unifont");
+    text2(x0+1.65, dy+27, "12V");
+    svg(x0+15, dy+25, "DC.svg", scale=0.025);
 }
 
 dial_x0 = 190.00;
@@ -449,12 +440,7 @@ module dial_loch() {
                height_0 / 2,
                h0 - 2*delta])
         cylinder(h = 20, d = dial_d0);
-    translate([dial_x0 - 5.25,
-               height_0 - 10,
-               h0 - delta])
-        rotate([0,180,180]) linear_extrude(height=0.6)
-            text(text = "DIAL", size = 4,
-                 font="Liberation Sans:style=Bold");
+    text2(dial_x0-5.25, height_0-10, "DIAL");
 }
 
 
@@ -487,12 +473,8 @@ module front() {
                 updown();
                 dial_loch();
                 power_switches();
-                translate([177, 16, h0 - delta])
-                    rotate([0, 180, 180])
-                        linear_extrude(height = 1.0)
-                            text(
-                text = "DF9RY", size = 8,
-                font = "Roddenberry:style=Bold Italic");
+                text2(177, 16, "DF9RY", size=8, font =
+                      "Roddenberry:style=Bold Italic");
             }
         }
     }
@@ -505,5 +487,7 @@ module print_front() {
 }
 
 print_front();
+//    microphone(2, 2, 0.035);
+
 
 
