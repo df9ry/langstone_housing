@@ -249,7 +249,7 @@ module display_haekchen() {
     
     translate([display_x0 - 2, 
                y0 + 2,
-               h0 + h1 - delta])
+               h0 + h1 - 2 * delta])
     { 
         display_haken_links();
         translate([0, display_h - 12, 0])
