@@ -1,8 +1,10 @@
 
-use <ttf/Roddenberry-DgLm.ttf>
-use <ttf/RoddenberryItalic-VYz6.ttf>
-use <ttf/RoddenberryBold-AgG2.ttf>
+//use <ttf/Roddenberry-DgLm.ttf>
+//use <ttf/RoddenberryItalic-VYz6.ttf>
+//use <ttf/RoddenberryBold-AgG2.ttf>
 use <ttf/RoddenberryBoldItalic-q4ol.ttf>
+use <unifont-15.1.04.otf>
+use <unifont_upper-15.1.04.otf>
 
 // Resolution for milling:
 $fa            = 1;    // Minimum angle
@@ -299,9 +301,20 @@ phones_dy = 17.00;
 module phones() {
     translate([phones_dx * 0.75, 7.0, 0])
         phone_bu();
+
+    translate([-5.5, 10.6, 0])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "\U01F3A4", size = 7.5,
+                 font = "Unifont Upper");
+
     translate([phones_dx * 1.75, 7.0, 0])
         phone_bu();
     
+    translate([28.5, 10.6, 0])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "\U01F3A7", size = 7.5,
+                 font = "Unifont Upper");
+
     translate([0, 0, phone_bu_h0 + phone_bu_h1])
         cube([phones_dx * 2.5, phones_dy, 10]); 
 }
@@ -323,21 +336,30 @@ module left_side() {
     translate([x0 + dx / 2 - phones_dx * 1.25,
                26.5,
                h0 - delta])
+    {
         phones();
+
+    }
 }
 
 module updown() {
-    x0 = 150.0;
-    dx = 20.0;
-    dy = 16.0;
-    translate([x0 + dx / 2,
-               dy,
-               h0 - delta])
+    x0  = 150.0;
+    dx  = 20.0;
+    dx1 = x0 + dx / 2;
+    dy  = 16.0;
+    translate([dx1, dy, h0 - delta])
         taster();
-    translate([x0 + dx / 2,
-               height_0 - dy,
-               h0 - delta])
+    translate([dx1 - 5.0, dy + 21, h0 - delta])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "\u25B2", size = 15,
+                 font = "Unifont");
+
+    translate([dx1, height_0 - dy, h0 - delta])
         taster();
+    translate([dx1 - 5.0, dy + 35, h0 - delta])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "\u25BC", size = 15,
+                 font = "Unifont");
 }
 
 module power_switches() {
@@ -348,10 +370,18 @@ module power_switches() {
                dy,
                h0 - delta])
         onoff();
+    translate([x0, dy + 17, h0 - delta])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "230V\u23E6", size = 5,
+                 font = "Unifont");
     translate([x0 + dx / 2,
                height_0 - dy,
                h0 - delta])
         onoff();
+    translate([x0 + 1.65, dy + 27, h0 - delta])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "12V\u2393", size = 5,
+                 font = "Unifont");
 }
 
 dial_x0 = 190.00;
@@ -396,6 +426,12 @@ module dial_loch() {
                height_0 / 2,
                h0 - 2*delta])
         cylinder(h = 20, d = dial_d0);
+    translate([dial_x0 - 5.25,
+               height_0 - 10,
+               h0 - delta])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "DIAL", size = 4,
+                 font="Liberation Sans:style=Bold");
 }
 
 module front() {
@@ -418,6 +454,12 @@ module front() {
                 updown();
                 dial_loch();
                 power_switches();
+                translate([177, 16, h0 - delta])
+                    rotate([0, 180, 180])
+                        linear_extrude(height = 1.0)
+                            text(
+                text = "DF9RY", size = 8,
+                font = "Roddenberry:style=Bold Italic");
             }
         }
     }
