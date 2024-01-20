@@ -249,6 +249,12 @@ module mic() {
         cylinder(h = mic_h1 + delta, d = mic_d1);
     translate([0, 0, mic_h0 + mic_h1])
         cylinder(h = 10, d = mic_d2);
+    // Text:
+    translate([-mic_d2 * 0.75 - 3.0, 
+               mic_d2 * 0.1, delta])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "MIC", size = 4,
+                 font="Liberation Sans:style=Bold");
 }
 
 taster_d0 = 12.25;
@@ -256,6 +262,16 @@ taster_d0 = 12.25;
 module taster() {
     translate([0, 0, -delta])
         cylinder(h = 10, d = taster_d0);
+}
+
+module ptt_taster() {
+    taster();
+    // Text:
+    translate([-mic_d2 * 0.75 - 3.0, 
+               1.3, delta])
+        rotate([0,180,180]) linear_extrude(height=0.6)
+            text(text = "PTT", size = 4,
+                 font="Liberation Sans:style=Bold");
 }
 
 onoff_d0 = 16.25;
@@ -302,8 +318,8 @@ module left_side() {
     translate([x0 + dx / 2,
                16.0,
                h0 - delta])
-        taster();
-   // Phone Buchsen:
+        ptt_taster();
+    // Phone Buchsen:
     translate([x0 + dx / 2 - phones_dx * 1.25,
                26.5,
                h0 - delta])
@@ -408,5 +424,4 @@ module front() {
 }
 
 front();
-//dial_block();
 
