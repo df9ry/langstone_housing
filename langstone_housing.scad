@@ -238,6 +238,29 @@ module display() {
         cube([display_w, display_h, 10]);
 }
 
+module display_haken_links() {
+    translate([2, 0, 0])
+        mirror([1, 0, 0])
+            display_haken_rechts();
+}
+
+module display_haekchen() {
+    y0 = (height_0 - display_h) / 2;
+    
+    translate([display_x0 - 2, 
+               y0 + 2,
+               h0 + h1 - delta])
+    { 
+        display_haken_links();
+        translate([0, display_h - 12, 0])
+            display_haken_links();
+        translate([display_w + 2, 0, 0])
+            display_haken_rechts();
+        translate([display_w + 2, display_h - 12, 0])
+            display_haken_rechts();
+    }
+}
+
 mic_d0 = 20.0;
 mic_h0 =  2.0;
 mic_d1 = 16.0;
@@ -434,12 +457,22 @@ module dial_loch() {
                  font="Liberation Sans:style=Bold");
 }
 
+
+module display_haken_rechts() {
+    union() {
+        cube([2, 8, 5]);
+        translate([0, 0, 3])
+            cube([5, 8, 2]);
+    }
+}
+
 module front() {
     difference() {
         {
             union() {
                 base();
                 dial_block();
+                display_haekchen();
             }
         }
         ;
@@ -465,5 +498,12 @@ module front() {
     }
 }
 
-front();
+module print_front() {
+    translate([0, height_0, h0 + h1 + 8])
+        rotate([180, 0, 0])
+            front();
+}
+
+print_front();
+
 
