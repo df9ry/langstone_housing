@@ -22,7 +22,7 @@ h1             =   5.0;
 fastener_width = 234.0;
 fastener_x     =   2.5;
 fastener_y     =  32.5;
-fastener_z     =   5.5;
+fastener_z     =   8.2;
 
 rundung_radius = (width_1 - fastener_width) / 2;
 
