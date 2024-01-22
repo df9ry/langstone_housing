@@ -33,7 +33,7 @@ schlitz_dx     = 174.0;
 schlitz_dy     =  62.0;
 
 wand_dicke     =   3.0;
-rand_dicke     =   1.5; // Rand aussen
+rand_dicke     =   2.5; // Rand aussen
 rand_dicke_2   =   5.0; // Rand innen
 
 text_imprint   =   0.75;
@@ -119,11 +119,11 @@ module sketch1() {
 
 module block0_aussen() {
     linear_extrude(height = h0)
-        sketch01();
+        sketch0();
 }
 
 module block0_innen() {
-    delta_dicke = rand_dicke_2 - rand_dicke;
+    delta_dicke = (rand_dicke_2 - rand_dicke) * 2;
     scale_x = (width_0 - delta_dicke) / width_0;
     scale_y = (height_0 - delta_dicke) / height_0;
         
@@ -166,7 +166,7 @@ module fastener() {
 
     difference() {
         cube([x, y + delta, z]);
-        {
+        union() {
             y0 = (y - la) / 2;
             translate([0, y0, z / 2 + delta])
                 fastener_loch(ld, x + 2*delta);
@@ -178,16 +178,16 @@ module fastener() {
 
 
 module blocks_0() {
-    block0();
-    translate([0, 0, h0 - delta])
-        block1();
-    {
-        delta_x0 = (width_0 - fastener_width) / 2;
-        delta_x1 = delta_x0 + fastener_width - 
-                     fastener_x;
-        delta_y  = (height_0 - fastener_y) / 2;
-        delta_z  = h0 + h1;
+    delta_x0 = (width_0 - fastener_width) / 2;
+    delta_x1 = delta_x0 + fastener_width - 
+                 fastener_x;
+    delta_y  = (height_0 - fastener_y) / 2;
+    delta_z  = h0 + h1;
         
+    union() {
+        block0();
+        translate([0, 0, h0 - delta])
+        block1();
         translate([delta_x0, delta_y, delta_z])
             fastener();
         translate([delta_x1, delta_y, delta_z])
@@ -297,7 +297,7 @@ module mic() {
     translate([0, 0, mic_h0 + mic_h1])
         cylinder(h = 10, d = mic_d2);
     // Text:
-    text2(-mic_d2 * 0.75 - 3.0, mic_d2 * 0.1, "MIC",
+    text2(-mic_d2 * 0.75 - 2.0, mic_d2 * 0.1, "MIC",
           z = -2*delta);
 }
 
@@ -311,7 +311,7 @@ module taster() {
 module ptt_taster() {
     taster();
     // Text:
-    text2(-mic_d2 * 0.75 - 3.0, 1.3, "PTT", z=-2*delta);
+    text2(-mic_d2 * 0.75 - 2.0, 1.3, "PTT", z=-2*delta);
 }
 
 onoff_d0 = 16.25;
@@ -324,7 +324,7 @@ module onoff() {
 phone_bu_d0 = 10.00;
 phone_bu_h0 =  1.50;
 phone_bu_d1 =  6.25;
-phone_bu_h1 =  1.50;
+phone_bu_h1 =  0.75;
 
 module phone_bu() {
     translate([0, 0, - 2*delta])
@@ -440,7 +440,7 @@ module dial_loch() {
                height_0 / 2,
                h0 - 2*delta])
         cylinder(h = 20, d = dial_d0);
-    text2(dial_x0-5.25, height_0-10, "DIAL");
+    text2(dial_x0-5.25, height_0-7, "DIAL");
 }
 
 
@@ -473,7 +473,7 @@ module front() {
                 updown();
                 dial_loch();
                 power_switches();
-                text2(177, 16, "DF9RY", size=8, font =
+                text2(177, 14.5, "DF9RY", size=8, font =
                       "Roddenberry:style=Bold Italic");
             }
         }
@@ -486,8 +486,9 @@ module print_front() {
             front();
 }
 
-print_front();
-//    microphone(2, 2, 0.035);
+front();   
+
+//print_front();
 
 
 
