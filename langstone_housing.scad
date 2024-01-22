@@ -422,7 +422,6 @@ module power_switches() {
 
 dial_x0 = 190.00;
 dial_d0 =   7.25;
-dial_d1 =  16.00;
 
 dial_free_z =  6.00;
 dial_leg    =  6.00;
@@ -451,9 +450,21 @@ module dial_block_base() {
 }
 
 module dial_block_gaps() {
-    translate([-17.5, -35, dial_free_z - delta])
-        rotate([0, 0, 45])
-            cube([50, 50, dial_base_z + 2*delta]);
+    nut_x = 2.5;
+    nut_y = 5.0 + dial_d0 / 2;
+    
+    translate([0, 0, dial_free_z - delta])
+        union() {
+            translate([-17.5, -35, 0])
+                rotate([0, 0, 45])
+                    cube([50, 50, dial_base_z + 
+                          2*delta]);
+            translate([(dial_base_x - nut_x) / 2,
+                       dial_base_y / 2, 0])
+                cube([nut_x, 
+                      nut_y, 
+                      dial_base_z + 2*delta]);
+        }
 }
 
 module dial_block() {
@@ -504,14 +515,12 @@ module front() {
 }
 
 module print_front() {
-    translate([0, height_0, h0 + h1 + 8])
+    translate([0, height_0, h0 + h1 + fastener_z])
         rotate([180, 0, 0])
             front();
 }
 
-front();   
-
-//print_front();
+print_front();
 
 
 
