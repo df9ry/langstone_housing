@@ -217,10 +217,11 @@ module base() {
                     rundung();
             }
             { // Schlitze
-                dx0 = (width_0 - schlitz_dx) / 2;
+                dx0 = (width_0 - schlitz_dx
+                        - schlitz_x) / 2;
                 dx1 = dx0 + schlitz_dx;
                 dy0 = (height_0 - schlitz_dy 
-                         - schlitz_y) / 2;
+                        - schlitz_y) / 2;
                 dy1 = dy0 + schlitz_dy;
                 dz  = h0 + h1 - schlitz_z;
                 
