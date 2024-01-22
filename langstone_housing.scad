@@ -424,21 +424,14 @@ dial_x0 = 190.00;
 dial_d0 =   7.25;
 dial_d1 =  16.00;
 
+dial_free_z =  6.00;
+dial_leg    =  6.00;
 dial_base_x = 30.00;
 dial_base_y = 30.00;
-dial_base_z =  3.00;
-dial_free_z =  5.00;
-dial_leg    =  6.00;
+dial_base_z = fastener_z - dial_free_z;
 
-module dial_block() {
-    translate([dial_x0 - dial_base_x / 2,
-               height_0 / 2 - dial_base_y / 2,
-               h0 + h1])
-    {
-        translate([0, 0, -delta])
-            cube([dial_leg,
-                  dial_leg,
-                  dial_free_z + 2*delta]);
+module dial_block_base() {
+    union() {
         translate([dial_base_x - dial_leg, 0, -delta])
             cube([dial_leg,
                   dial_leg,
@@ -454,6 +447,22 @@ module dial_block() {
                   dial_free_z + 2*delta]);
         translate([0, 0, dial_free_z])
             cube([dial_base_x, dial_base_y, dial_base_z]);
+    }
+}
+
+module dial_block_gaps() {
+    translate([-17.5, -35, dial_free_z - delta])
+        rotate([0, 0, 45])
+            cube([50, 50, dial_base_z + 2*delta]);
+}
+
+module dial_block() {
+    translate([dial_x0 - dial_base_x / 2,
+               height_0 / 2 - dial_base_y / 2,
+               h0 + h1])
+    difference() {
+        dial_block_base();
+        dial_block_gaps();
     }
 }
 
