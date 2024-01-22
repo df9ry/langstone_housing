@@ -260,8 +260,28 @@ module display() {
         cube([display_w, display_h, 10]);
 }
 
+display_haken_y      = 8;
+display_haken_base_x = 3;
+display_haken_base_z = 5;
+display_haken_top_x  = 6;
+display_haken_top_z  = 2;
+
+module display_haken_rechts() {
+    union() {
+        cube([display_haken_base_x,
+              display_haken_y, 
+              display_haken_base_z]);
+        translate([0, 0, 
+                   display_haken_base_z -
+                     display_haken_top_z])
+            cube([display_haken_top_x,
+                  display_haken_y,
+                  display_haken_top_z]);
+    }
+}
+
 module display_haken_links() {
-    translate([2, 0, 0])
+    translate([display_haken_base_x, 0, 0])
         mirror([1, 0, 0])
             display_haken_rechts();
 }
@@ -269,16 +289,17 @@ module display_haken_links() {
 module display_haekchen() {
     y0 = (height_0 - display_h) / 2;
     
-    translate([display_x0 - 2, 
+    translate([display_x0 - display_haken_base_x, 
                y0 + 2,
                h0 + h1 - 2 * delta])
     { 
         display_haken_links();
         translate([0, display_h - 12, 0])
             display_haken_links();
-        translate([display_w + 2, 0, 0])
+        translate([display_w + display_haken_base_x, 0, 0])
             display_haken_rechts();
-        translate([display_w + 2, display_h - 12, 0])
+        translate([display_w + display_haken_base_x,
+                   display_h - 12, 0])
             display_haken_rechts();
     }
 }
@@ -443,14 +464,6 @@ module dial_loch() {
     text2(dial_x0-5.25, height_0-7, "DIAL");
 }
 
-
-module display_haken_rechts() {
-    union() {
-        cube([2, 8, 5]);
-        translate([0, 0, 3])
-            cube([5, 8, 2]);
-    }
-}
 
 module front() {
     difference() {
