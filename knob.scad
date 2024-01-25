@@ -18,8 +18,8 @@ knob_inner_h   =  3.50;
 knob_hole_r    =  3.20;
 knob_hole_h    =  8.50;
 
-knob_top       = knob_height - 1.25;
-ufp_inset      =  0.50;
+knob_top       = knob_height - 1.5;
+ufp_outset     =  0.75;
 
 include <ufp.scad>
 
@@ -79,10 +79,10 @@ module alpha4() {
         cylinder(r = knob_radius * 0.7, h = 2);
 }
 
-module alpha5() {
-    translate([0, 0, knob_top - ufp_inset])
+module logo() {
+    translate([0, 0, knob_top - delta])
         scale([0.35, 0.35, 1])
-            linear_extrude(2)
+            linear_extrude(ufp_outset + delta)
                 ufp();
 }
 
@@ -98,16 +98,18 @@ module alpha() {
         alpha2();
         alpha3();
         alpha4();
-        alpha5();
     }
 }
 
 module knob()
 {
-    difference() {
-        knob1();
-        alpha();
-    };
+    union() {
+        difference() {
+            knob1();
+            alpha();
+        };
+        logo();
+    }
 }
 
 knob();
