@@ -14,9 +14,14 @@ n_flutes       =  9;
 
 top_rounding   = knob_radius * 4.5;
 knob_inner_r   = knob_radius * 0.7;
-knob_inner_h   =  3.500;
-knob_hole_r    =  3.100;
-knob_hole_h    =  8.500;
+knob_inner_h   =  3.50;
+knob_hole_r    =  3.20;
+knob_hole_h    =  8.50;
+
+knob_top       = knob_height - 1.25;
+ufp_inset      =  0.50;
+
+include <ufp.scad>
 
 function f_x(x, a) = x + cos(a) 
                      * (knob_fluting * cos(a*n_flutes));
@@ -69,6 +74,18 @@ module alpha3() {
              h = knob_hole_h);
 }
 
+module alpha4() {
+    translate([0, 0, knob_top])
+        cylinder(r = knob_radius * 0.7, h = 2);
+}
+
+module alpha5() {
+    translate([0, 0, knob_top - ufp_inset])
+        scale([0.35, 0.35, 1])
+            linear_extrude(2)
+                ufp();
+}
+
 module knob1() {
     linear_extrude(
         height = knob_height, scale = knob_scale)
@@ -80,6 +97,8 @@ module alpha() {
         alpha1();
         alpha2();
         alpha3();
+        alpha4();
+        alpha5();
     }
 }
 
