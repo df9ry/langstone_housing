@@ -4,16 +4,36 @@ include <base.scad>
 display_w    = 97.5;
 display_h    = 59.0;
 display_t    =  1.50; // Absenkung;
+display_d    =  6.40; // Display Dicke
 display_rand =  1.25;
 display_x0   = 48.0;
 
-module display() {
-    translate([display_rand, display_rand, -delta])
-        cube([display_w - 2 * display_rand,
-              display_h - 2 * display_rand,
-              display_t + 2*delta]);
+module display_front() {
     translate([0, 0, display_t])
-        cube([display_w, display_h, 10]);
+        cube([display_w, display_h, display_d]);
+}
+
+module display() {
+    union() {
+        translate([display_rand, display_rand, -delta])
+            cube([display_w - 2 * display_rand,
+                  display_h - 2 * display_rand,
+                  display_t + 2*delta]);
+        display_front();
+    }
+}
+
+disp_marg_d  =  1.9;
+disp_marg_dy =  2.5;
+disp_marg_dx =  4.5;
+
+module display_margin() {
+    translate([display_x0 - disp_marg_dx,
+               display_h,
+               h0 + h1 - delta])
+        cube([display_w + 2 * disp_marg_dx,
+              ((height_0 - display_h) / 2 + disp_marg_dy),
+              display_d + disp_marg_d - 3.5]);
 }
 
 display_haken_y      = 8;
@@ -50,13 +70,13 @@ module display_haekchen() {
                h0 + h1 - 2 * delta])
     { 
         display_haken_links();
-        translate([0, display_h - 12, 0])
-            display_haken_links();
+        //translate([0, display_h - 12, 0])
+        //    display_haken_links();
         translate([display_w + display_haken_base_x, 0, 0])
             display_haken_rechts();
-        translate([display_w + display_haken_base_x,
-                   display_h - 12, 0])
-            display_haken_rechts();
+        //translate([display_w + display_haken_base_x,
+        //           display_h - 12, 0])
+        //    display_haken_rechts();
     }
 }
 
@@ -248,6 +268,7 @@ module front() {
                 base();
                 dial_block();
                 display_haekchen();
+                display_margin();
             }
         }
         ;
@@ -276,6 +297,7 @@ module print_front() {
 }
 
 print_front();
+//display_margin();
 
 
 
