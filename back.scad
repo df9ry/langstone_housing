@@ -64,23 +64,27 @@ module key() {
 }
 
 net_width  =  23.25;
-net_height =  20.50;
-net_x0     = 100.00;
-net_y0     =  40.00;
+net_height =  25.00;
+net_x0     =  95.00;
+net_y0     =  34.50;
 
 module net() {
     translate([net_x0, net_y0, -delta])
         cube([net_width, net_height, 10]);
+    translate([net_x0, net_y0 - 1.5, 2.5])
+        cube([net_width, net_height + 3, 10]);
 }
 
 ac_width  =  47.75;
-ac_height =  27.45;
-ac_x0     =  20.0;
-ac_y0     =  33.0;
+ac_height =  27.50;
+ac_x0     =  20.00;
+ac_y0     =  33.00;
 
 module ac() {
     translate([ac_x0, ac_y0, -delta])
         cube([ac_width, ac_height, 10]);
+    translate([ac_x0, ac_y0 - 0.5, 1.25])
+        cube([ac_width, ac_height + 1.25, 10]);
     // Text:
     text2(ac_x0 + 5, ac_y0 + 33.5, "AC 230V 50Hz", 
           z = -2*delta);
@@ -138,7 +142,7 @@ dcout_width4  =  21.00;
 dcout_height1 =  12.25;
 dcout_height2 =  16.25;
 dcout_height4 =  12.25;
-dcout_x0      =  95.00;
+dcout_x0      =  75.00;
 dcout_y0      =   9.00;
 dcout_z0      =   2.5;
 dcout_scr_dx  =  25.00;
@@ -186,9 +190,78 @@ module dcout() {
             translate([dx_2 + dcout_scr_dx, dy_2, -delta])
                 cylinder(h = 10, d = dcout_scr_d);
             // Text:
-            text2(1.5, dcout_y0 + 12.5, "DC 12V OUT", 
+            text2(1.5, dcout_y0 + 12, "DC 12V OUT", 
                   z = -2*delta);
         }
+}
+
+fuse_d0  =  16.00;
+fuse_h0  =   2.50;
+fuse_d1  =  12.25;
+fuse_h1  =   2.00;
+fuse_d2  =  17.00;
+fuse1_x0 =  60.00;
+fuse2_x0 = 124.00;
+fuse_y0  =  17.50;
+
+module fuse1() {
+    translate([fuse1_x0, fuse_y0, -delta])
+        cylinder(h = fuse_h0 + 2*delta, d = fuse_d0);
+    translate([fuse1_x0, fuse_y0, fuse_h0])
+        cylinder(h = 10, d = fuse_d1);
+    translate([fuse1_x0, fuse_y0, fuse_h0 + fuse_h1])
+        cylinder(h = 10, d = fuse_d2);
+    // Text:
+    text2(fuse1_x0 - 6.5, fuse_y0 + 12.5, "DC IN", 
+          z = -2*delta);
+}
+
+module fuse2() {
+    translate([fuse2_x0, fuse_y0, -delta])
+        cylinder(h = fuse_h0 + 2*delta, d = fuse_d0);
+    translate([fuse2_x0, fuse_y0, fuse_h0])
+        cylinder(h = 10, d = fuse_d1);
+    translate([fuse2_x0, fuse_y0, fuse_h0 + fuse_h1])
+        cylinder(h = 10, d = fuse_d2);
+    // Text:
+    text2(fuse2_x0 - 9.3, fuse_y0 + 12.5, "DC OUT", 
+          z = -2*delta);
+}
+
+trx_width  =  65.00;
+trx_height =  18.50;
+trx_rand   =   2.50;
+trx_dy     =   3.00;
+trx_x0     = 155.00;
+trx_y0     =   9.00;
+
+module trx() {
+    translate([trx_x0 + trx_rand, trx_y0 + trx_rand,
+               -delta])
+        cube([trx_width - 2 * trx_rand,
+              trx_height - 2 * trx_rand, 10]);
+    translate([trx_x0, trx_y0, trx_dy - delta])
+        cube([trx_width, trx_height * 1.6, 10]);
+    // Text:
+    text2(trx_x0 + 13, trx_y0 + 21.5, "RX", z = -2*delta);
+    text2(trx_x0 + 43, trx_y0 + 21.5, "TX", z = -2*delta);
+}
+
+module trx_pos() {
+    union() {
+        translate([trx_x0 - trx_rand,
+                   trx_y0 - trx_rand,
+                   h0 + h1 - 1.0])
+            cube([trx_width * 0.67, 2 * trx_rand, 3]);
+        translate([trx_x0 - trx_rand - 2.0,
+                   trx_y0 - trx_rand,
+                   h0 + h1 - 1.0])
+            cube([2 * trx_rand + 2, trx_height * 0.8, 3]);
+        translate([trx_x0 + trx_width - trx_rand,
+                   trx_y0 - trx_rand,
+                   h0 + h1 - 1.0])
+            cube([2 * trx_rand + 2, trx_height * 0.8, 3]);
+    }
 }
 
 module diff() {
@@ -202,14 +275,22 @@ module diff() {
             ac();
             dcin();
             dcout();
+            fuse1();
+            fuse2();
+            trx();
         }
 }
 
 module back() {
-    difference() {
-        base();
-        diff();
-    }
+    translate([0, height_0, h0 + h1 + fastener_z])
+        rotate([180, 0, 0])
+            union() {
+                difference() {
+                    base();
+                    diff();
+                };
+                trx_pos();
+            }
 }
 
 back();
